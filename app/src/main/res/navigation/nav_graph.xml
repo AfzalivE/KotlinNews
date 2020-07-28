@@ -4,26 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/PostListFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.afzaln.kotlinnews.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
-
-        <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+        android:id="@+id/PostListFragment"
+        android:name="com.afzaln.kotlinnews.PostListFragment"
+        android:label="@string/post_list_fragment_label"
+        tools:layout="@layout/fragment_post_list">
     </fragment>
-    <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.afzaln.kotlinnews.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
 
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
-    </fragment>
 </navigation>
