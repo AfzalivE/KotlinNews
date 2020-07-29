@@ -1,7 +1,11 @@
 package com.afzaln.kotlinnews
 
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
@@ -9,7 +13,7 @@ import com.afzaln.kotlinnews.data.models.PostData
 import com.afzaln.kotlinnews.data.models.Thing
 import com.afzaln.kotlinnews.databinding.ImagePostItemBinding
 import com.afzaln.kotlinnews.databinding.PostItemBinding
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
 import timber.log.Timber
 
 class PostItemAdapter : RecyclerView.Adapter<PostViewHolder>() {
@@ -59,6 +63,10 @@ class ImagePostViewHolder(private val binding: ImagePostItemBinding) : PostViewH
     init {
         binding.root.setOnClickListener {
             Timber.d("clicked on ${post.data.title}")
+            Navigation.findNavController(itemView)
+                .navigate(
+                    PostListFragmentDirections.actionPostListFragmentToArticleFragment(post.data, post.data.title)
+                )
         }
     }
 
@@ -67,7 +75,11 @@ class ImagePostViewHolder(private val binding: ImagePostItemBinding) : PostViewH
         binding.title.text = post.data.title
 
         if (post.data.url.isImageUrl()) {
-            Picasso.get().load(post.data.url).into(binding.image)
+            Glide.with(itemView.context)
+                .load(post.data.url)
+                .centerCrop()
+                .placeholder(R.drawable.ic_placeholder)
+                .into(binding.image)
         }
     }
 }
@@ -79,6 +91,15 @@ class SelfPostViewHolder(private val binding: PostItemBinding) : PostViewHolder(
     init {
         binding.root.setOnClickListener {
             Timber.d("clicked on ${post.data.title}")
+            if (post.data.url_overridden_by_dest != null && !post.data.url_overridden_by_dest!!.isImageUrl()) {
+                val intent = Intent(Intent.ACTION_VIEW).setData(Uri.parse(post.data.url_overridden_by_dest))
+                ContextCompat.startActivity(itemView.context, intent, null)
+            } else {
+                Navigation.findNavController(itemView)
+                    .navigate(
+                        PostListFragmentDirections.actionPostListFragmentToArticleFragment(post.data, post.data.title)
+                    )
+            }
         }
     }
 

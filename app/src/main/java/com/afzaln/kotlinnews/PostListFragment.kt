@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.afzaln.kotlinnews.data.models.PostData
 import com.afzaln.kotlinnews.data.models.Thing
 import com.afzaln.kotlinnews.databinding.FragmentPostListBinding
@@ -29,7 +28,7 @@ class PostListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         postItemAdapter = PostItemAdapter()
-        binding.postList.layoutManager = LinearLayoutManager(context)
+        binding.postList.setItemViewCacheSize(20)
         binding.postList.adapter = postItemAdapter
 
         viewModel.fetchPosts().observe(viewLifecycleOwner, {

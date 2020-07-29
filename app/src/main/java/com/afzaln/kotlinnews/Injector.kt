@@ -2,7 +2,6 @@ package com.afzaln.kotlinnews
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.afzaln.kotlinnews.data.RedditApiService

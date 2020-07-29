@@ -11,6 +11,22 @@
         android:name="com.afzaln.kotlinnews.PostListFragment"
         android:label="@string/post_list_fragment_label"
         tools:layout="@layout/fragment_post_list">
+        <action
+            android:id="@+id/action_PostListFragment_to_ArticleFragment"
+            app:destination="@id/ArticleFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ArticleFragment"
+        android:name="com.afzaln.kotlinnews.ArticleFragment"
+        android:label="{title}"
+        tools:layout="@layout/fragment_article">
+        <argument
+            android:name="postData"
+            app:argType="com.afzaln.kotlinnews.data.models.PostData" />
+        <argument
+            android:name="title"
+            app:argType="string" />
     </fragment>
 
 </navigation>
