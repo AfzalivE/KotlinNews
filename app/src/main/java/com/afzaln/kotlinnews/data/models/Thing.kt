@@ -24,5 +24,6 @@ data class ListingData(
 data class PostData(
     val subreddit: String,
     val id: String,
-    val title: String
+    val title: String,
+    val url: String
 ) : Data()

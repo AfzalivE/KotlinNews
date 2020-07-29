@@ -57,6 +57,8 @@ dependencies {
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
     }
 
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
     // debugging
     implementation "com.jakewharton.timber:timber:4.7.1"
 

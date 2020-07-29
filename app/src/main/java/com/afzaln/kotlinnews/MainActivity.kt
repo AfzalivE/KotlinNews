@@ -19,7 +19,9 @@ class MainActivity : AppCompatActivity() {
 
         val navController = findNavController(R.id.nav_host_fragment)
         appBarConfiguration = AppBarConfiguration(navController.graph)
-        activityMainBinding.toolbar.setupWithNavController(navController, appBarConfiguration)
+        val toolbar = activityMainBinding.toolbar
+        toolbar.setupWithNavController(navController, appBarConfiguration)
+        toolbar.setTitle(R.string.app_name)
     }
 
     override fun onSupportNavigateUp(): Boolean {

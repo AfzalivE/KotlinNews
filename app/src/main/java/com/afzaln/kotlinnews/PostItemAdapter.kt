@@ -4,9 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.afzaln.kotlinnews.data.models.PostData
 import com.afzaln.kotlinnews.data.models.Thing
+import com.afzaln.kotlinnews.databinding.ImagePostItemBinding
 import com.afzaln.kotlinnews.databinding.PostItemBinding
+import com.squareup.picasso.Picasso
 import timber.log.Timber
 
 class PostItemAdapter : RecyclerView.Adapter<PostViewHolder>() {
@@ -19,19 +22,39 @@ class PostItemAdapter : RecyclerView.Adapter<PostViewHolder>() {
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val binding = PostItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PostViewHolder(binding)
+        val inflater = LayoutInflater.from(parent.context)
+        return when (viewType) {
+            TYPE_IMAGE -> ImagePostViewHolder(ImagePostItemBinding.inflate(inflater, parent, false))
+            TYPE_SELFTEXT -> SelfPostViewHolder(PostItemBinding.inflate(inflater, parent, false))
+            else -> SelfPostViewHolder(PostItemBinding.inflate(inflater, parent, false))
+        }
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) = holder.bind(postList[position])
 
     override fun getItemCount(): Int = postList.size
 
+    override fun getItemViewType(position: Int): Int {
+        if (postList[position].data.url.isImageUrl()) {
+            return TYPE_IMAGE
+        }
+
+        return TYPE_SELFTEXT
+    }
+
+    companion object {
+        const val TYPE_SELFTEXT = 0
+        const val TYPE_IMAGE = 1
+    }
 }
 
-class PostViewHolder(private val binding: PostItemBinding) : RecyclerView.ViewHolder(binding.root) {
+abstract class PostViewHolder(binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
+    abstract fun bind(post: Thing<PostData>)
+}
 
-    lateinit var post: Thing<PostData>
+class ImagePostViewHolder(private val binding: ImagePostItemBinding) : PostViewHolder(binding) {
+
+    private lateinit var post: Thing<PostData>
 
     init {
         binding.root.setOnClickListener {
@@ -39,7 +62,27 @@ class PostViewHolder(private val binding: PostItemBinding) : RecyclerView.ViewHo
         }
     }
 
-    fun bind(post: Thing<PostData>) {
+    override fun bind(post: Thing<PostData>) {
+        this.post = post
+        binding.title.text = post.data.title
+
+        if (post.data.url.isImageUrl()) {
+            Picasso.get().load(post.data.url).into(binding.image)
+        }
+    }
+}
+
+class SelfPostViewHolder(private val binding: PostItemBinding) : PostViewHolder(binding) {
+
+    private lateinit var post: Thing<PostData>
+
+    init {
+        binding.root.setOnClickListener {
+            Timber.d("clicked on ${post.data.title}")
+        }
+    }
+
+    override fun bind(post: Thing<PostData>) {
         this.post = post
         binding.title.text = post.data.title
     }

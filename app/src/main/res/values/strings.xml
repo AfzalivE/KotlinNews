@@ -3,4 +3,5 @@
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="post_list_fragment_label">Post List Fragment</string>
+    <string name="image_content_description">Image</string>
 </resources>
