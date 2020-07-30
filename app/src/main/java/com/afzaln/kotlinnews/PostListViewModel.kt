@@ -4,16 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.afzaln.kotlinnews.PostListUiState.Error
-import com.afzaln.kotlinnews.PostListUiState.Loaded
-import com.afzaln.kotlinnews.PostListUiState.Loading
+import com.afzaln.kotlinnews.PostListUiState.*
 import com.afzaln.kotlinnews.data.RedditRepository
 import com.afzaln.kotlinnews.data.models.ListingData
 import com.afzaln.kotlinnews.data.models.Thing
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import java.io.IOException
 
 class PostListViewModel(private val repository: RedditRepository) : ViewModel() {
