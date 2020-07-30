@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.afzaln.kotlinnews.data.RedditApiService
+import com.afzaln.kotlinnews.data.RedditRepository
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
@@ -17,6 +18,10 @@ class Injector private constructor() {
             .build()
 
         retrofit.create(RedditApiService::class.java)
+    }
+
+    val redditRepository: RedditRepository by lazy {
+        RedditRepository(redditApi)
     }
 
     companion object {
@@ -36,6 +41,6 @@ class Injector private constructor() {
 
 class PostListViewModelFactory: ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return modelClass.constructors[0].newInstance(Injector.get().redditApi) as T
+        return modelClass.constructors[0].newInstance(Injector.get().redditRepository) as T
     }
 }

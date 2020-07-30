@@ -33,5 +33,7 @@ data class PostData(
     val title: String,
     val url: String,
     val selftext: String,
-    val url_overridden_by_dest: String?
+    val selftext_html: String?,
+    val url_overridden_by_dest: String?,
+    val crosspost_parent_list: List<PostData>?
 ) : Data(), Parcelable

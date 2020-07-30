@@ -1,11 +1,7 @@
 package com.afzaln.kotlinnews
 
-import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
@@ -14,9 +10,8 @@ import com.afzaln.kotlinnews.data.models.Thing
 import com.afzaln.kotlinnews.databinding.ImagePostItemBinding
 import com.afzaln.kotlinnews.databinding.PostItemBinding
 import com.bumptech.glide.Glide
-import timber.log.Timber
 
-class PostItemAdapter : RecyclerView.Adapter<PostViewHolder>() {
+class PostItemAdapter(private val clickListener: (PostData) -> Unit) : RecyclerView.Adapter<PostViewHolder>() {
 
     var postList: List<Thing<PostData>> = arrayListOf()
         set(value) {
@@ -28,9 +23,15 @@ class PostItemAdapter : RecyclerView.Adapter<PostViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            TYPE_IMAGE -> ImagePostViewHolder(ImagePostItemBinding.inflate(inflater, parent, false))
-            TYPE_SELFTEXT -> SelfPostViewHolder(PostItemBinding.inflate(inflater, parent, false))
-            else -> SelfPostViewHolder(PostItemBinding.inflate(inflater, parent, false))
+            TYPE_IMAGE -> {
+                val binding = ImagePostItemBinding.inflate(inflater, parent, false)
+                ImagePostViewHolder(binding, clickListener)
+            }
+            else -> {
+                // self text
+                val binding = PostItemBinding.inflate(inflater, parent, false)
+                SelfPostViewHolder(binding, clickListener)
+            }
         }
     }
 
@@ -56,18 +57,15 @@ abstract class PostViewHolder(binding: ViewBinding) : RecyclerView.ViewHolder(bi
     abstract fun bind(post: Thing<PostData>)
 }
 
-class ImagePostViewHolder(private val binding: ImagePostItemBinding) : PostViewHolder(binding) {
+class ImagePostViewHolder(
+    private val binding: ImagePostItemBinding,
+    clickListener: (PostData) -> Unit
+) : PostViewHolder(binding) {
 
     private lateinit var post: Thing<PostData>
 
     init {
-        binding.root.setOnClickListener {
-            Timber.d("clicked on ${post.data.title}")
-            Navigation.findNavController(itemView)
-                .navigate(
-                    PostListFragmentDirections.actionPostListFragmentToArticleFragment(post.data, post.data.title)
-                )
-        }
+        binding.root.setOnClickListener { clickListener(post.data) }
     }
 
     override fun bind(post: Thing<PostData>) {
@@ -84,23 +82,15 @@ class ImagePostViewHolder(private val binding: ImagePostItemBinding) : PostViewH
     }
 }
 
-class SelfPostViewHolder(private val binding: PostItemBinding) : PostViewHolder(binding) {
+class SelfPostViewHolder(
+    private val binding: PostItemBinding,
+    clickListener: (PostData) -> Unit
+) : PostViewHolder(binding) {
 
     private lateinit var post: Thing<PostData>
 
     init {
-        binding.root.setOnClickListener {
-            Timber.d("clicked on ${post.data.title}")
-            if (post.data.url_overridden_by_dest != null && !post.data.url_overridden_by_dest!!.isImageUrl()) {
-                val intent = Intent(Intent.ACTION_VIEW).setData(Uri.parse(post.data.url_overridden_by_dest))
-                ContextCompat.startActivity(itemView.context, intent, null)
-            } else {
-                Navigation.findNavController(itemView)
-                    .navigate(
-                        PostListFragmentDirections.actionPostListFragmentToArticleFragment(post.data, post.data.title)
-                    )
-            }
-        }
+        binding.root.setOnClickListener { clickListener(post.data) }
     }
 
     override fun bind(post: Thing<PostData>) {
