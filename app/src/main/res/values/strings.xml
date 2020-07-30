@@ -5,4 +5,6 @@
     <string name="post_list_fragment_label">@string/app_name</string>
     <string name="artcle_fragment_label">Article Fragment</string>
     <string name="image_content_description">Image</string>
+    <string name="error_content_description">Error</string>
+    <string name="error_fetching_posts">Unable to fetch Kotlin news, click to retry</string>
 </resources>

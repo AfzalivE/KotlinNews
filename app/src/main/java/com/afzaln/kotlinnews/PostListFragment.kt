@@ -26,6 +26,7 @@ class PostListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentPostListBinding.inflate(inflater)
+        viewModel.fetchPosts()
         return binding.root
     }
 
@@ -35,30 +36,69 @@ class PostListFragment : Fragment() {
         // To improve UX if lots of images are showing
         binding.postList.setItemViewCacheSize(20)
         binding.postList.adapter = postItemAdapter
+        binding.errorImg.setOnClickListener {
+            viewModel.fetchPosts()
+        }
+        binding.errorMsg.setOnClickListener {
+            viewModel.fetchPosts()
+        }
 
-        viewModel.fetchPosts().observe(viewLifecycleOwner, {
-            updateList(it.data.children)
+        viewModel.postsLiveData.observe(viewLifecycleOwner, { uiState ->
+            uiState?.apply {
+                render(this)
+            }
         })
+    }
+
+    private fun render(uiState: PostListUiState) {
+        when (uiState) {
+            PostListUiState.Loading -> showLoading()
+            is PostListUiState.Loaded -> showList(uiState.posts.data.children)
+            PostListUiState.Error -> showError()
+        }
+    }
+
+    private fun showError() {
+        binding.errorGroup.visibility = View.VISIBLE
+        binding.loading.visibility = View.GONE
+        binding.postList.visibility = View.GONE
+    }
+
+    private fun showLoading() {
+        binding.errorGroup.visibility = View.GONE
+        binding.loading.visibility = View.VISIBLE
+        binding.postList.visibility = View.GONE
+    }
+
+    private fun showList(posts: List<Thing<PostData>>) {
+        Timber.d("Loaded")
+        binding.errorGroup.visibility = View.GONE
+        binding.loading.visibility = View.GONE
+        binding.postList.visibility = View.VISIBLE
+        postItemAdapter.postList = posts
     }
 
     private fun onItemClick(postData: PostData) {
         Timber.d("clicked on ${postData.title}")
 
-        val realPostData = if (postData.crosspost_parent_list.isNullOrEmpty()) postData else postData.crosspost_parent_list.first()
+        val realPostData = if (postData.isCrossPost) postData.crosspost_parent_list!!.first() else postData
 
-        if (realPostData.url_overridden_by_dest != null && !realPostData.url_overridden_by_dest.isImageUrl()) {
-            val intent = Intent(Intent.ACTION_VIEW).setData(Uri.parse(realPostData.url_overridden_by_dest))
-            ContextCompat.startActivity(requireContext(), intent, null)
+        if (realPostData.isLink) {
+            launchExternalUrl(realPostData)
         } else {
-            Navigation.findNavController(requireView())
-                .navigate(
-                    PostListFragmentDirections.actionPostListFragmentToArticleFragment(realPostData, realPostData.title)
-                )
+            openArticle(realPostData)
         }
     }
 
-    private fun updateList(posts: List<Thing<PostData>>) {
-        Timber.d("Loaded")
-        postItemAdapter.postList = posts
+    private fun openArticle(realPostData: PostData) {
+        Navigation.findNavController(requireView())
+            .navigate(
+                PostListFragmentDirections.actionPostListFragmentToArticleFragment(realPostData, realPostData.title)
+            )
+    }
+
+    private fun launchExternalUrl(realPostData: PostData) {
+        val intent = Intent(Intent.ACTION_VIEW).setData(Uri.parse(realPostData.url_overridden_by_dest))
+        ContextCompat.startActivity(requireContext(), intent, null)
     }
 }

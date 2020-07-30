@@ -10,6 +10,8 @@ import com.afzaln.kotlinnews.data.models.Thing
 import com.afzaln.kotlinnews.databinding.ImagePostItemBinding
 import com.afzaln.kotlinnews.databinding.PostItemBinding
 import com.bumptech.glide.Glide
+import com.bumptech.glide.TransitionOptions
+import com.bumptech.glide.request.transition.DrawableCrossFadeTransition
 
 class PostItemAdapter(private val clickListener: (PostData) -> Unit) : RecyclerView.Adapter<PostViewHolder>() {
 
@@ -40,7 +42,9 @@ class PostItemAdapter(private val clickListener: (PostData) -> Unit) : RecyclerV
     override fun getItemCount(): Int = postList.size
 
     override fun getItemViewType(position: Int): Int {
-        if (postList[position].data.url.isImageUrl()) {
+        if (postList[position].data.thumbnailUrl.isImageUrl()
+            || postList[position].data.url.isImageUrl()
+        ) {
             return TYPE_IMAGE
         }
 
@@ -72,10 +76,12 @@ class ImagePostViewHolder(
         this.post = post
         binding.title.text = post.data.title
 
-        if (post.data.url.isImageUrl()) {
+        val imageUrl = if (post.data.thumbnailUrl.isNotEmpty()) post.data.thumbnailUrl else post.data.url
+
+        if (imageUrl.isImageUrl()) {
             Glide.with(itemView.context)
-                .load(post.data.url)
-                .centerCrop()
+                .load(imageUrl)
+                .centerInside()
                 .placeholder(R.drawable.ic_placeholder)
                 .into(binding.image)
         }
