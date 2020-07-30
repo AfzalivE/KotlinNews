@@ -1,7 +1,6 @@
 package com.afzaln.kotlinnews
 
 import android.annotation.SuppressLint
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.afzaln.kotlinnews.data.RedditApiService
@@ -11,9 +10,9 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 class Injector private constructor() {
 
-    val redditApi: RedditApiService by lazy {
+    private val redditApi: RedditApiService by lazy {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://www.reddit.com/api/v1/")
+            .baseUrl(BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
 
@@ -29,7 +28,9 @@ class Injector private constructor() {
         @Volatile
         private lateinit var INSTANCE: Injector
 
-        fun init(appContext: Context) {
+        var BASE_URL = "https://www.reddit.com/api/v1/"
+
+        fun init() {
             INSTANCE = Injector()
         }
 
