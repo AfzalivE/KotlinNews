@@ -10,8 +10,6 @@ import com.afzaln.kotlinnews.data.models.Thing
 import com.afzaln.kotlinnews.databinding.ImagePostItemBinding
 import com.afzaln.kotlinnews.databinding.PostItemBinding
 import com.bumptech.glide.Glide
-import com.bumptech.glide.TransitionOptions
-import com.bumptech.glide.request.transition.DrawableCrossFadeTransition
 
 class PostItemAdapter(private val clickListener: (PostData) -> Unit) : RecyclerView.Adapter<PostViewHolder>() {
 

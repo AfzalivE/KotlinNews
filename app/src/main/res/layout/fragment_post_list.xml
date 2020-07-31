@@ -42,7 +42,8 @@
         android:id="@+id/error_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
+        tools:visibility="visible"
         app:constraint_referenced_ids="error_msg, error_img" />
 
     <androidx.recyclerview.widget.RecyclerView
